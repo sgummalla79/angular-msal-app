@@ -1,0 +1,26 @@
+<div class="home-container" *ngIf="isLoggedIn">
+  <header class="header">
+    <h1>Welcome Home!</h1>
+    <button class="logout-button" (click)="logout()">Logout</button>
+  </header>
+
+  <main class="main-content">
+    <div class="profile-card" *ngIf="profile">
+      <h2>Your Profile</h2>
+      <div class="profile-info">
+        <p><strong>Display Name:</strong> {{ profile.displayName }}</p>
+        <p><strong>Email:</strong> {{ profile.mail || profile.userPrincipalName }}</p>
+        <p><strong>Job Title:</strong> {{ profile.jobTitle || 'Not specified' }}</p>
+        <p><strong>Office Location:</strong> {{ profile.officeLocation || 'Not specified' }}</p>
+      </div>
+    </div>
+
+    <div class="loading" *ngIf="!profile">
+      <p>Loading profile...</p>
+    </div>
+  </main>
+</div>
+
+<div class="error-container" *ngIf="!isLoggedIn">
+  <p>You are not authenticated. Redirecting to login...</p>
+</div>

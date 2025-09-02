@@ -1,0 +1,78 @@
+.home-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+  color: #333;
+  margin: 0;
+}
+
+.logout-button {
+  background: #d13438;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.2s;
+}
+
+.logout-button:hover {
+  background: #b02a2e;
+}
+
+.main-content {
+  padding: 2rem;
+  display: flex;
+  justify-content: center;
+}
+
+.profile-card {
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  max-width: 500px;
+  width: 100%;
+}
+
+.profile-card h2 {
+  color: #333;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.profile-info p {
+  margin: 0.5rem 0;
+  color: #666;
+}
+
+.loading {
+  text-align: center;
+  padding: 2rem;
+  color: #666;
+}
+
+.error-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: #f8f9fa;
+}
+
+.error-container p {
+  color: #666;
+  font-size: 1.1rem;
+}

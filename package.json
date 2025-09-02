@@ -28,8 +28,11 @@
     "@angular/forms": "^20.2.0",
     "@angular/platform-browser": "^20.2.0",
     "@angular/router": "^20.2.0",
+    "@azure/msal-angular": "^4.0.19",
+    "@azure/msal-browser": "^4.21.1",
     "rxjs": "~7.8.0",
-    "tslib": "^2.3.0"
+    "tslib": "^2.3.0",
+    "zone.js": "^0.15.1"
   },
   "devDependencies": {
     "@angular/build": "^20.2.1",
