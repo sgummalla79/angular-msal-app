@@ -6,14 +6,14 @@
     <!-- Microsoft Authentication -->
     <div class="auth-section">
       <h3>Microsoft Account</h3>
-      <div class="account-types microsoft">
+      <!-- <div class="account-types microsoft">
         <p>✅ @outlook.com</p>
         <p>✅ @hotmail.com</p>
         <p>✅ @live.com</p>
         <p>✅ @msn.com</p>
-      </div>
+      </div> -->
 
-      <button 
+      <!-- <button 
         class="login-button microsoft-button" 
         (click)="signInWithMicrosoft()"
         [disabled]="isLoading">
@@ -27,7 +27,7 @@
         
         <span *ngIf="loadingProvider !== 'microsoft'">Sign in with Microsoft</span>
         <span *ngIf="loadingProvider === 'microsoft'">Signing in...</span>
-      </button>
+      </button> -->
 
       <button 
         class="login-button microsoft-popup-button" 
@@ -41,7 +41,7 @@
           <rect x="13" y="13" width="10" height="10" fill="#7fba00"/>
         </svg>
         
-        <span>Microsoft (Popup)</span>
+        <span>Sign in with Microsoft</span>
       </button>
     </div>
 
@@ -52,11 +52,11 @@
     <!-- Google Authentication -->
     <div class="auth-section">
       <h3>Google Account</h3>
-      <div class="account-types google">
+      <!-- <div class="account-types google">
         <p>✅ @gmail.com</p>
         <p>✅ Google Workspace accounts</p>
         <p>✅ YouTube accounts</p>
-      </div>
+      </div> -->
 
       <button 
         class="login-button google-button" 
