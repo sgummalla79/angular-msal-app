@@ -1,26 +1,118 @@
-<div class="home-container" *ngIf="isLoggedIn">
+<div class="home-container" *ngIf="currentUser">
   <header class="header">
-    <h1>Welcome Home!</h1>
-    <button class="logout-button" (click)="logout()">Logout</button>
+    <div class="header-content">
+      <h1>Welcome Home!</h1>
+      <div class="header-buttons">
+        <button 
+          class="refresh-button" 
+          (click)="refreshProfile()"
+          [disabled]="isLoading">
+          🔄 Refresh Profile
+        </button>
+        <button 
+          class="logout-button" 
+          (click)="logout()" 
+          [disabled]="isLoading">
+          <span *ngIf="!isLoading">Logout (Redirect)</span>
+          <span *ngIf="isLoading">Logging out...</span>
+        </button>
+        <button 
+          class="logout-button popup-logout" 
+          (click)="logoutPopup()" 
+          [disabled]="isLoading">
+          Logout (Popup)
+        </button>
+      </div>
+    </div>
   </header>
 
   <main class="main-content">
-    <div class="profile-card" *ngIf="profile">
-      <h2>Your Profile</h2>
-      <div class="profile-info">
-        <p><strong>Display Name:</strong> {{ profile.displayName }}</p>
-        <p><strong>Email:</strong> {{ profile.mail || profile.userPrincipalName }}</p>
-        <p><strong>Job Title:</strong> {{ profile.jobTitle || 'Not specified' }}</p>
-        <p><strong>Office Location:</strong> {{ profile.officeLocation || 'Not specified' }}</p>
+    <div class="profile-card">
+      <div class="profile-header">
+        <div class="avatar-placeholder">
+          {{ currentUser.name.charAt(0).toUpperCase() || 'U' }}
+        </div>
+        <h2>{{ currentUser.name }}</h2>
+        <p class="user-email">{{ currentUser.email }}</p>
       </div>
-    </div>
 
-    <div class="loading" *ngIf="!profile">
-      <p>Loading profile...</p>
+      <div class="profile-info">
+        <h3>Account Information</h3>
+        
+        <div class="info-item">
+          <span class="info-label">Display Name:</span>
+          <span class="info-value">{{ currentUser.name }}</span>
+        </div>
+        
+        <div class="info-item">
+          <span class="info-label">Email:</span>
+          <span class="info-value">{{ currentUser.email }}</span>
+        </div>
+        
+        <div class="info-item">
+          <span class="info-label">User ID:</span>
+          <span class="info-value">{{ currentUser.id }}</span>
+        </div>
+        
+        <div class="info-item">
+          <span class="info-label">Home Account ID:</span>
+          <span class="info-value">{{ currentUser.homeAccountId }}</span>
+        </div>
+
+        <!-- Microsoft Graph Profile Information -->
+        <div *ngIf="userProfile" class="graph-profile">
+          <h3>Microsoft Graph Profile</h3>
+          
+          <div class="info-item" *ngIf="userProfile.displayName">
+            <span class="info-label">Display Name:</span>
+            <span class="info-value">{{ userProfile.displayName }}</span>
+          </div>
+          
+          <div class="info-item" *ngIf="userProfile.givenName">
+            <span class="info-label">First Name:</span>
+            <span class="info-value">{{ userProfile.givenName }}</span>
+          </div>
+          
+          <div class="info-item" *ngIf="userProfile.surname">
+            <span class="info-label">Last Name:</span>
+            <span class="info-value">{{ userProfile.surname }}</span>
+          </div>
+          
+          <div class="info-item" *ngIf="userProfile.jobTitle">
+            <span class="info-label">Job Title:</span>
+            <span class="info-value">{{ userProfile.jobTitle }}</span>
+          </div>
+          
+          <div class="info-item" *ngIf="userProfile.officeLocation">
+            <span class="info-label">Office Location:</span>
+            <span class="info-value">{{ userProfile.officeLocation }}</span>
+          </div>
+          
+          <div class="info-item" *ngIf="userProfile.mobilePhone">
+            <span class="info-label">Mobile Phone:</span>
+            <span class="info-value">{{ userProfile.mobilePhone }}</span>
+          </div>
+        </div>
+
+        <!-- Raw Claims Information -->
+        <div *ngIf="currentUser.idTokenClaims" class="claims-info">
+          <h3>Token Claims</h3>
+          <pre class="claims-display">{{ currentUser.idTokenClaims | json }}</pre>
+        </div>
+      </div>
     </div>
   </main>
 </div>
 
-<div class="error-container" *ngIf="!isLoggedIn">
-  <p>You are not authenticated. Redirecting to login...</p>
+<div class="loading-container" *ngIf="!currentUser && !isLoading">
+  <div class="error-message">
+    <p>You are not authenticated. Redirecting to login...</p>
+  </div>
+</div>
+
+<div class="loading-container" *ngIf="isLoading">
+  <div class="loading-spinner">
+    <div class="spinner"></div>
+    <p>Loading...</p>
+  </div>
 </div>

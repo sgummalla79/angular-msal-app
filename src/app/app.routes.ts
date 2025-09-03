@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
-import { MsalGuard } from '@azure/msal-angular';
 import { LoginComponent } from './login/login.component';
 import { HomeComponent } from './home/home.component';
+import { MicrosoftAuthGuard } from './guards/microsoft-auth.guard';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -9,7 +9,7 @@ export const routes: Routes = [
   { 
     path: 'home', 
     component: HomeComponent,
-    canActivate: [MsalGuard]
+    canActivate: [MicrosoftAuthGuard]
   },
   { path: '**', redirectTo: '/login' }
 ];

@@ -1,54 +1,64 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { MsalService, MsalBroadcastService } from '@azure/msal-angular';
-import { EventMessage, EventType, InteractionStatus } from '@azure/msal-browser';
-import { Subject } from 'rxjs';
-import { filter, takeUntil } from 'rxjs/operators';
+import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+import { MicrosoftAuthService } from '../services/microsoft-auth.service';
 
 @Component({
   selector: 'app-login',
   standalone: true,
+  imports: [CommonModule],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent implements OnInit, OnDestroy {
   private readonly _destroying$ = new Subject<void>();
+  
+  isLoading = false;
 
   constructor(
-    private authService: MsalService,
-    private msalBroadcastService: MsalBroadcastService,
+    private microsoftAuth: MicrosoftAuthService,
     private router: Router
   ) {}
 
   ngOnInit(): void {
-    this.msalBroadcastService.inProgress$
-      .pipe(
-        filter((status: InteractionStatus) => status === InteractionStatus.None),
-        takeUntil(this._destroying$)
-      )
-      .subscribe(() => {
-        this.checkAndSetActiveAccount();
+    // Check if already authenticated
+    if (this.microsoftAuth.isUserAuthenticated()) {
+      this.router.navigate(['/home']);
+      return;
+    }
+
+    // Listen for authentication state changes
+    this.microsoftAuth.isAuthenticated$
+      .pipe(takeUntil(this._destroying$))
+      .subscribe(isAuthenticated => {
+        if (isAuthenticated) {
+          this.router.navigate(['/home']);
+        }
+      });
+
+    // Listen for loading state changes
+    this.microsoftAuth.isLoading$
+      .pipe(takeUntil(this._destroying$))
+      .subscribe(isLoading => {
+        this.isLoading = isLoading;
       });
   }
 
-  login() {
-    this.authService.loginRedirect({
-      scopes: ['User.Read']
-    });
+  signInWithMicrosoft(): void {
+    this.microsoftAuth.signIn();
   }
 
-  checkAndSetActiveAccount() {
-    let activeAccount = this.authService.instance.getActiveAccount();
-
-    if (!activeAccount && this.authService.instance.getAllAccounts().length > 0) {
-      let accounts = this.authService.instance.getAllAccounts();
-      this.authService.instance.setActiveAccount(accounts[0]);
-      activeAccount = this.authService.instance.getActiveAccount();
-    }
-
-    if (activeAccount) {
-      this.router.navigate(['/home']);
-    }
+  signInWithMicrosoftPopup(): void {
+    this.microsoftAuth.signInPopup().subscribe({
+      next: () => {
+        console.log('Login successful');
+      },
+      error: (error) => {
+        console.error('Login failed:', error);
+      }
+    });
   }
 
   ngOnDestroy(): void {

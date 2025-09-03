@@ -10,6 +10,9 @@ import { msalConfig } from './auth-config';
 import { IPublicClientApplication, PublicClientApplication, InteractionType } from '@azure/msal-browser';
 import { MsalGuard, MsalInterceptor, MsalBroadcastService, MsalInterceptorConfiguration, MsalService, MSAL_GUARD_CONFIG, MSAL_INSTANCE, MSAL_INTERCEPTOR_CONFIG, MsalGuardConfiguration } from '@azure/msal-angular';
 
+// Services
+import { MicrosoftAuthService } from './services/microsoft-auth.service';
+
 export function MSALInstanceFactory(): IPublicClientApplication {
   return new PublicClientApplication(msalConfig);
 }
@@ -17,7 +20,6 @@ export function MSALInstanceFactory(): IPublicClientApplication {
 export function MSALInterceptorConfigFactory(): MsalInterceptorConfiguration {
   const protectedResourceMap = new Map<string, Array<string>>();
   
-  // Add Microsoft Graph endpoints that require authentication
   protectedResourceMap.set('https://graph.microsoft.com/v1.0/me', ['User.Read']);
   protectedResourceMap.set('https://graph.microsoft.com/v1.0/me/photo/$value', ['User.Read']);
 
@@ -60,6 +62,7 @@ export const appConfig: ApplicationConfig = {
     },
     MsalService,
     MsalGuard,
-    MsalBroadcastService
+    MsalBroadcastService,
+    MicrosoftAuthService
   ]
 };

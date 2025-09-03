@@ -1,11 +1,9 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MsalService, MsalBroadcastService } from '@azure/msal-angular';
-import { Subject } from 'rxjs';
-import { filter, takeUntil } from 'rxjs/operators';
-import { InteractionStatus } from '@azure/msal-browser';
-import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+import { MicrosoftAuthService, MicrosoftUser, MicrosoftUserProfile } from '../services/microsoft-auth.service';
 
 @Component({
   selector: 'app-home',
@@ -16,80 +14,69 @@ import { Router } from '@angular/router';
 })
 export class HomeComponent implements OnInit, OnDestroy {
   private readonly _destroying$ = new Subject<void>();
-  profile: any = null;
-  isLoggedIn = false;
+  
+  currentUser: MicrosoftUser | null = null;
+  userProfile: MicrosoftUserProfile | null = null;
+  isLoading = false;
 
   constructor(
-    private authService: MsalService,
-    private msalBroadcastService: MsalBroadcastService,
-    private http: HttpClient,
+    private microsoftAuth: MicrosoftAuthService,
     private router: Router
   ) {}
 
   ngOnInit(): void {
-    this.msalBroadcastService.inProgress$
-      .pipe(
-        filter((status: InteractionStatus) => status === InteractionStatus.None),
-        takeUntil(this._destroying$)
-      )
-      .subscribe(() => {
-        this.checkAndSetActiveAccount();
+    // Listen for authentication state
+    this.microsoftAuth.isAuthenticated$
+      .pipe(takeUntil(this._destroying$))
+      .subscribe(isAuthenticated => {
+        if (!isAuthenticated) {
+          this.router.navigate(['/login']);
+        }
+      });
+
+    // Listen for user changes
+    this.microsoftAuth.currentUser$
+      .pipe(takeUntil(this._destroying$))
+      .subscribe(user => {
+        this.currentUser = user;
+      });
+
+    // Listen for profile changes
+    this.microsoftAuth.userProfile$
+      .pipe(takeUntil(this._destroying$))
+      .subscribe(profile => {
+        this.userProfile = profile;
+      });
+
+    // Listen for loading state
+    this.microsoftAuth.isLoading$
+      .pipe(takeUntil(this._destroying$))
+      .subscribe(isLoading => {
+        this.isLoading = isLoading;
       });
   }
 
-  checkAndSetActiveAccount() {
-    let activeAccount = this.authService.instance.getActiveAccount();
-
-    if (!activeAccount && this.authService.instance.getAllAccounts().length > 0) {
-      let accounts = this.authService.instance.getAllAccounts();
-      this.authService.instance.setActiveAccount(accounts[0]);
-      activeAccount = this.authService.instance.getActiveAccount();
-    }
-
-    if (activeAccount) {
-      this.isLoggedIn = true;
-      this.getProfile();
-    } else {
-      this.isLoggedIn = false;
-      this.router.navigate(['/login']);
-    }
+  logout(): void {
+    this.microsoftAuth.signOut();
   }
 
-  getProfile() {
-    // First, acquire a token with the required scopes
-    this.authService.acquireTokenSilent({
-      scopes: ['User.Read'],
-      account: this.authService.instance.getActiveAccount()!
-    }).subscribe({
-      next: (result) => {
-        // Token acquired successfully, now make the API call
-        const headers = {
-          'Authorization': `Bearer ${result.accessToken}`
-        };
-        
-        this.http.get('https://graph.microsoft.com/v1.0/me', { headers })
-          .subscribe({
-            next: (profile) => {
-              this.profile = profile;
-            },
-            error: (error) => {
-              console.error('Error fetching profile:', error);
-            }
-          });
+  logoutPopup(): void {
+    this.microsoftAuth.signOutPopup().subscribe({
+      next: () => {
+        this.router.navigate(['/login']);
       },
       error: (error) => {
-        console.error('Error acquiring token:', error);
-        // If silent token acquisition fails, try interactive
-        this.authService.acquireTokenRedirect({
-          scopes: ['User.Read'],
-          account: this.authService.instance.getActiveAccount()!
-        });
+        console.error('Logout failed:', error);
       }
     });
   }
 
-  logout() {
-    this.authService.logoutRedirect();
+  // Example of using Graph API through the service
+  async refreshProfile(): Promise<void> {
+    const profile = await this.microsoftAuth.makeGraphApiCall<MicrosoftUserProfile>('/me');
+    if (profile) {
+      console.log('Profile refreshed:', profile);
+    }
   }
 
   ngOnDestroy(): void {

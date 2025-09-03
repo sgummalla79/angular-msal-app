@@ -2,13 +2,44 @@
   <div class="login-card">
     <h1>Welcome to Angular MSAL App</h1>
     <p>Please sign in with your Microsoft account</p>
-    <button class="login-button" (click)="login()">
+    
+    <div class="account-types">
+      <p>✅ @outlook.com</p>
+      <p>✅ @hotmail.com</p>
+      <p>✅ @live.com</p>
+      <p>✅ @msn.com</p>
+    </div>
+
+    <button 
+      class="login-button" 
+      (click)="signInWithMicrosoft()"
+      [disabled]="isLoading">
+      
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <rect x="1" y="1" width="10" height="10" fill="#f25022"/>
+        <rect x="13" y="1" width="10" height="10" fill="#00a4ef"/>
+        <rect x="1" y="13" width="10" height="10" fill="#ffb900"/>
+        <rect x="13" y="13" width="10" height="10" fill="#7fba00"/>
       </svg>
-      Sign in with Microsoft
+      
+      <span *ngIf="!isLoading">Sign in with Microsoft (Redirect)</span>
+      <span *ngIf="isLoading">Signing in...</span>
+    </button>
+
+    <button 
+      class="login-button popup-button" 
+      (click)="signInWithMicrosoftPopup()"
+      [disabled]="isLoading">
+      
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="1" y="1" width="10" height="10" fill="#f25022"/>
+        <rect x="13" y="1" width="10" height="10" fill="#00a4ef"/>
+        <rect x="1" y="13" width="10" height="10" fill="#ffb900"/>
+        <rect x="13" y="13" width="10" height="10" fill="#7fba00"/>
+      </svg>
+      
+      <span *ngIf="!isLoading">Sign in with Microsoft (Popup)</span>
+      <span *ngIf="isLoading">Signing in...</span>
     </button>
   </div>
 </div>
