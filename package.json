@@ -9,7 +9,7 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "azure:build": "npm install && ng build --configuration production",
-    "azure:serve": "npx http-server dist/your-app-name -p 8080 -a 0.0.0.0"
+    "azure:serve": "npx http-server dist/angular-msal-app -p 8080 -a 0.0.0.0"
   },
   "prettier": {
     "printWidth": 100,
