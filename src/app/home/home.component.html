@@ -2,35 +2,35 @@
   <header class="header">
     <div class="header-content">
       <h1>Welcome Home!</h1>
-      <div class="header-buttons">
-        <button 
-          class="refresh-button" 
-          (click)="refreshProfile()"
-          [disabled]="isLoading">
-          🔄 Refresh Profile
-        </button>
-        <button 
-          class="logout-button" 
-          (click)="logout()" 
-          [disabled]="isLoading">
-          <span *ngIf="!isLoading">Logout (Redirect)</span>
-          <span *ngIf="isLoading">Logging out...</span>
-        </button>
-        <button 
-          class="logout-button popup-logout" 
-          (click)="logoutPopup()" 
-          [disabled]="isLoading">
-          Logout (Popup)
-        </button>
-      </div>
+      <button 
+        class="logout-button" 
+        (click)="logout()" 
+        [disabled]="isLoading">
+        <span *ngIf="!isLoading">Logout</span>
+        <span *ngIf="isLoading">Logging out...</span>
+      </button>
     </div>
   </header>
 
   <main class="main-content">
     <div class="profile-card">
       <div class="profile-header">
-        <div class="avatar-placeholder">
-          {{ currentUser.name.charAt(0).toUpperCase() || 'U' }}
+        <div class="avatar-section">
+          <img 
+            *ngIf="currentUser.picture" 
+            [src]="currentUser.picture" 
+            [alt]="currentUser.name + ' avatar'"
+            class="avatar">
+          <div 
+            *ngIf="!currentUser.picture" 
+            class="avatar-placeholder"
+            [style.background]="getProviderColor()">
+            {{ currentUser.name.charAt(0).toUpperCase() || 'U' }}
+          </div>
+          <div class="provider-badge" [style.border-color]="getProviderColor()">
+            <span class="provider-icon">{{ getProviderIcon() }}</span>
+            <span class="provider-text">{{ getProviderDisplayName() }}</span>
+          </div>
         </div>
         <h2>{{ currentUser.name }}</h2>
         <p class="user-email">{{ currentUser.email }}</p>
@@ -55,49 +55,90 @@
         </div>
         
         <div class="info-item">
-          <span class="info-label">Home Account ID:</span>
-          <span class="info-value">{{ currentUser.homeAccountId }}</span>
+          <span class="info-label">Authentication Provider:</span>
+          <span class="info-value" [style.color]="getProviderColor()">
+            {{ getProviderDisplayName() }}
+          </span>
         </div>
 
-        <!-- Microsoft Graph Profile Information -->
-        <div *ngIf="userProfile" class="graph-profile">
-          <h3>Microsoft Graph Profile</h3>
+        <!-- Microsoft-specific information -->
+        <div *ngIf="currentProvider === 'microsoft'" class="provider-specific microsoft">
+          <h3>Microsoft Account Details</h3>
           
-          <div class="info-item" *ngIf="userProfile.displayName">
-            <span class="info-label">Display Name:</span>
-            <span class="info-value">{{ userProfile.displayName }}</span>
+          <div class="info-item" *ngIf="getMicrosoftProfile()?.username">
+            <span class="info-label">Username:</span>
+            <span class="info-value">{{ getMicrosoftProfile().username }}</span>
           </div>
           
-          <div class="info-item" *ngIf="userProfile.givenName">
+          <div class="info-item" *ngIf="getMicrosoftProfile()?.tenantId">
+            <span class="info-label">Tenant ID:</span>
+            <span class="info-value">{{ getMicrosoftProfile().tenantId }}</span>
+          </div>
+          
+          <div class="info-item" *ngIf="getMicrosoftProfile()?.homeAccountId">
+            <span class="info-label">Home Account ID:</span>
+            <span class="info-value">{{ getMicrosoftProfile().homeAccountId }}</span>
+          </div>
+          
+          <!-- Token Claims (if available) -->
+          <div *ngIf="getMicrosoftProfile()?.idTokenClaims" class="claims-section">
+            <h4>Token Claims</h4>
+            <div class="claims-grid">
+              <div *ngIf="getMicrosoftProfile().idTokenClaims.given_name" class="claim-item">
+                <span class="claim-label">Given Name:</span>
+                <span class="claim-value">{{ getMicrosoftProfile().idTokenClaims.given_name }}</span>
+              </div>
+              <div *ngIf="getMicrosoftProfile().idTokenClaims.family_name" class="claim-item">
+                <span class="claim-label">Family Name:</span>
+                <span class="claim-value">{{ getMicrosoftProfile().idTokenClaims.family_name }}</span>
+              </div>
+              <div *ngIf="getMicrosoftProfile().idTokenClaims.preferred_username" class="claim-item">
+                <span class="claim-label">Preferred Username:</span>
+                <span class="claim-value">{{ getMicrosoftProfile().idTokenClaims.preferred_username }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Google-specific information -->
+        <div *ngIf="currentProvider === 'google'" class="provider-specific google">
+          <h3>Google Account Details</h3>
+          
+          <div class="info-item" *ngIf="getGoogleProfile()?.given_name">
             <span class="info-label">First Name:</span>
-            <span class="info-value">{{ userProfile.givenName }}</span>
+            <span class="info-value">{{ getGoogleProfile().given_name }}</span>
           </div>
           
-          <div class="info-item" *ngIf="userProfile.surname">
+          <div class="info-item" *ngIf="getGoogleProfile()?.family_name">
             <span class="info-label">Last Name:</span>
-            <span class="info-value">{{ userProfile.surname }}</span>
+            <span class="info-value">{{ getGoogleProfile().family_name }}</span>
           </div>
           
-          <div class="info-item" *ngIf="userProfile.jobTitle">
-            <span class="info-label">Job Title:</span>
-            <span class="info-value">{{ userProfile.jobTitle }}</span>
+          <div class="info-item" *ngIf="getGoogleProfile()?.verified_email !== undefined">
+            <span class="info-label">Email Verified:</span>
+            <span class="info-value" [class.verified]="getGoogleProfile().verified_email" 
+                  [class.not-verified]="!getGoogleProfile().verified_email">
+              {{ getGoogleProfile().verified_email ? 'Yes ✓' : 'No ✗' }}
+            </span>
           </div>
           
-          <div class="info-item" *ngIf="userProfile.officeLocation">
-            <span class="info-label">Office Location:</span>
-            <span class="info-value">{{ userProfile.officeLocation }}</span>
+          <div class="info-item" *ngIf="getGoogleProfile()?.locale">
+            <span class="info-label">Locale:</span>
+            <span class="info-value">{{ getGoogleProfile().locale }}</span>
           </div>
           
-          <div class="info-item" *ngIf="userProfile.mobilePhone">
-            <span class="info-label">Mobile Phone:</span>
-            <span class="info-value">{{ userProfile.mobilePhone }}</span>
+          <div class="info-item" *ngIf="getGoogleProfile()?.picture">
+            <span class="info-label">Profile Picture:</span>
+            <span class="info-value">Available</span>
           </div>
         </div>
 
-        <!-- Raw Claims Information -->
-        <div *ngIf="currentUser.idTokenClaims" class="claims-info">
-          <h3>Token Claims</h3>
-          <pre class="claims-display">{{ currentUser.idTokenClaims | json }}</pre>
+        <!-- Raw Data (for debugging) -->
+        <div class="raw-data-section">
+          <details>
+            <summary>Raw User Data (Debug)</summary>
+            <pre class="raw-data">{{ currentUser.rawData | json }}</pre>
+          </details>
         </div>
       </div>
     </div>

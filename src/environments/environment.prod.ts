@@ -7,5 +7,8 @@ export const environment = {
       redirectUri: 'https://angular-msal-app.azurewebsites.net', // Update this
       postLogoutRedirectUri: 'https://angular-msal-app.azurewebsites.net'
     }
+  },
+  googleConfig: {
+    clientId: '665892251052-ocsbdbft133ml49oduo399ias1q1565t.apps.googleusercontent.com'
   }
 };

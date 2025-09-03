@@ -3,36 +3,57 @@
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background: linear-gradient(135deg, #0078d4 0%, #00bcf2 100%);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
 
 .login-card {
   background: white;
   padding: 2.5rem;
   border-radius: 16px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
   text-align: center;
-  max-width: 450px;
+  max-width: 500px;
   width: 90%;
 }
 
 h1 {
   color: #333;
   margin-bottom: 1rem;
-  font-size: 1.5rem;
+  font-size: 1.75rem;
+  font-weight: 600;
 }
 
 p {
   color: #666;
+  margin-bottom: 1.5rem;
+  font-size: 1.1rem;
+}
+
+.auth-section {
+  margin-bottom: 2rem;
+}
+
+.auth-section h3 {
+  color: #333;
   margin-bottom: 1rem;
+  font-size: 1.2rem;
 }
 
 .account-types {
-  background: #f8f9fa;
   padding: 1rem;
   border-radius: 8px;
   margin: 1rem 0;
   border: 2px solid #e9ecef;
+}
+
+.account-types.microsoft {
+  background: #f0f8ff;
+  border-color: #0078d4;
+}
+
+.account-types.google {
+  background: #f8f9ff;
+  border-color: #4285f4;
 }
 
 .account-types p {
@@ -46,42 +67,99 @@ p {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
-  background: #0078d4;
-  color: white;
+  gap: 0.75rem;
   border: none;
   padding: 0.875rem 1.5rem;
-  border-radius: 6px;
+  border-radius: 8px;
   cursor: pointer;
   font-size: 1rem;
   font-weight: 500;
   width: 100%;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
   margin-bottom: 0.75rem;
-}
-
-.login-button:hover:not(:disabled) {
-  background: #106ebe;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 120, 212, 0.3);
 }
 
 .login-button:disabled {
   opacity: 0.6;
   cursor: not-allowed;
-  transform: none;
 }
 
-.popup-button {
-  background: #6c757d;
+.microsoft-button {
+  background: #0078d4;
+  color: white;
 }
 
-.popup-button:hover:not(:disabled) {
-  background: #5a6268;
-  box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
+.microsoft-button:hover:not(:disabled) {
+  background: #106ebe;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 120, 212, 0.3);
+}
+
+.microsoft-popup-button {
+  background: #5a6c7d;
+  color: white;
+}
+
+.microsoft-popup-button:hover:not(:disabled) {
+  background: #495057;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(73, 80, 87, 0.3);
+}
+
+.google-button {
+  background: white;
+  color: #333;
+  border: 2px solid #dadce0;
+}
+
+.google-button:hover:not(:disabled) {
+  background: #f8f9fa;
+  border-color: #4285f4;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(66, 133, 244, 0.2);
+}
+
+.separator {
+  position: relative;
+  margin: 2rem 0;
+  text-align: center;
+}
+
+.separator::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: #e1e5e9;
+}
+
+.separator span {
+  background: white;
+  padding: 0 1rem;
+  color: #666;
+  font-weight: 500;
+  font-size: 0.9rem;
 }
 
 .login-button svg {
   width: 20px;
   height: 20px;
+  flex-shrink: 0;
+}
+
+@media (max-width: 480px) {
+  .login-card {
+    padding: 2rem;
+    margin: 1rem;
+  }
+  
+  h1 {
+    font-size: 1.5rem;
+  }
+  
+  .auth-section {
+    margin-bottom: 1.5rem;
+  }
 }

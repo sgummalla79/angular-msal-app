@@ -2,19 +2,19 @@ import { Injectable } from '@angular/core';
 import { CanActivate, Router, UrlTree } from '@angular/router';
 import { Observable } from 'rxjs';
 import { map, take } from 'rxjs/operators';
-import { MicrosoftAuthService } from '../services/microsoft-auth.service';
+import { AuthManagerService } from '../services/auth-manager.service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class MicrosoftAuthGuard implements CanActivate {
+export class AuthGuard implements CanActivate {
   constructor(
-    private microsoftAuth: MicrosoftAuthService,
+    private authManager: AuthManagerService,
     private router: Router
   ) {}
 
   canActivate(): Observable<boolean | UrlTree> {
-    return this.microsoftAuth.isAuthenticated$.pipe(
+    return this.authManager.isAuthenticated$.pipe(
       take(1),
       map(isAuthenticated => {
         if (isAuthenticated) {

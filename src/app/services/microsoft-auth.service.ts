@@ -363,4 +363,11 @@ export class MicrosoftAuthService implements OnDestroy {
     this._destroying$.next(undefined);
     this._destroying$.complete();
   }
+  
+  /**
+   * Get current loading state synchronously
+  */
+  public getCurrentLoadingState(): boolean {
+    return this.isLoadingSubject.value;
+  }
 }

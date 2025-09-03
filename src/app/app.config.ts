@@ -12,6 +12,8 @@ import { MsalGuard, MsalInterceptor, MsalBroadcastService, MsalInterceptorConfig
 
 // Services
 import { MicrosoftAuthService } from './services/microsoft-auth.service';
+import { GoogleAuthService } from './services/google-auth.service';
+import { AuthManagerService } from './services/auth-manager.service';
 
 export function MSALInstanceFactory(): IPublicClientApplication {
   return new PublicClientApplication(msalConfig);
@@ -63,6 +65,8 @@ export const appConfig: ApplicationConfig = {
     MsalService,
     MsalGuard,
     MsalBroadcastService,
-    MicrosoftAuthService
+    MicrosoftAuthService,
+    GoogleAuthService,
+    AuthManagerService
   ]
 };

@@ -7,5 +7,8 @@ export const environment = {
       redirectUri: 'http://localhost:4200',
       postLogoutRedirectUri: 'http://localhost:4200'
     }
+  },
+  googleConfig: {
+    clientId: '665892251052-ocsbdbft133ml49oduo399ias1q1565t.apps.googleusercontent.com'
   }
 };
