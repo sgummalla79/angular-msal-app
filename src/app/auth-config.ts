@@ -1,13 +1,14 @@
 import { LogLevel, Configuration, BrowserCacheLocation } from '@azure/msal-browser';
+import { environment } from '../environments/environment';
 
 const isIE = window.navigator.userAgent.indexOf('MSIE ') > -1 || window.navigator.userAgent.indexOf('Trident/') > -1;
 
 export const msalConfig: Configuration = {
   auth: {
-    clientId: 'b312a0ef-4376-43b9-866f-b1baf02e84d7', // Replace with your Azure App Registration Client ID
-    authority: 'https://login.microsoftonline.com/consumers', // Replace with your tenant ID or use 'common'
-    redirectUri: 'http://localhost:4200',
-    postLogoutRedirectUri: 'http://localhost:4200'
+    clientId: environment.msalConfig.auth.clientId,
+    authority: environment.msalConfig.auth.authority,
+    redirectUri: environment.msalConfig.auth.redirectUri,
+    postLogoutRedirectUri: environment.msalConfig.auth.postLogoutRedirectUri
   },
   cache: {
     cacheLocation: BrowserCacheLocation.LocalStorage,
@@ -16,9 +17,11 @@ export const msalConfig: Configuration = {
   system: {
     loggerOptions: {
       loggerCallback: (level: LogLevel, message: string) => {
-        console.log(message);
+        if (!environment.production) {
+          console.log(message);
+        }
       },
-      logLevel: LogLevel.Info,
+      logLevel: environment.production ? LogLevel.Warning : LogLevel.Info,
       piiLoggingEnabled: false
     }
   }
